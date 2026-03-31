@@ -1,0 +1,50 @@
+.booking-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.booking-section {
+    margin-top: 30px;
+}
+
+.service-list {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.service-btn {
+    padding: 12px 20px;
+    border: 1px solid #ddd;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.service-btn.active {
+    background: #ff4f8b;
+    color: white;
+    border-color: #ff4f8b;
+}
+
+.time-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.continue-btn {
+    margin-top: 40px;
+    padding: 15px 25px;
+    background: #ff4f8b;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+}
+
+.continue-btn:hover {
+    opacity: 0.9;
+    }

@@ -1,0 +1,23 @@
+.footer {
+    display: flex;
+    justify-content: space-around;
+    padding: 40px 20px;
+    background: #f8f8f8;
+    margin-top: 40px;
+}
+
+.footer-section h4 {
+    margin-bottom: 10px;
+    color: #ff4f8b;
+}
+
+.footer-section a {
+    display: block;
+    margin-bottom: 6px;
+    text-decoration: none;
+    color: #333;
+}
+
+.footer-section a:hover {
+    color: #ff4f8b;
+}

@@ -1,0 +1,33 @@
+.confirmation-container {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.success-message {
+    margin-top: 10px;
+    font-size: 18px;
+    color: #444;
+}
+
+.details-box {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    text-align: left;
+}
+
+.home-btn {
+    display: inline-block;
+    margin-top: 30px;
+    padding: 12px 25px;
+    background: #ff4f8b;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.home-btn:hover {
+    opacity: 0.9;
+}
