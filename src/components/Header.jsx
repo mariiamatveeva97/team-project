@@ -19,10 +19,10 @@ function Header() {
                     <button className="text-sm font-bold text-slate-400 hover:text-slate-600 transition">NL</button>
 
                     <Link
-                        to="/booking"
+                        to="/login"
                         className="px-6 py-2.5 bg-pink-600 text-white text-sm font-bold rounded-xl hover:bg-pink-700 transition shadow-lg shadow-pink-100 active:scale-95"
                     >
-                        Book Now
+                        Login
                     </Link>
                 </div>
             </div>
