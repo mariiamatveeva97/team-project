@@ -1,16 +1,18 @@
 import { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 function BookingConfirmation() {
-  const params = new URLSearchParams(window.location.search);
-  const service = params.get("service");
-  const time = params.get("time");
+  const [searchParams] = useSearchParams(); 
+  const navigate = useNavigate();
 
-  // Redirect if missing data
+  const service = searchParams.get("service");
+  const time = searchParams.get("time");
+
   useEffect(() => {
     if (!service || !time) {
-      window.location.href = "/booking";
+      navigate("/booking");
     }
-  }, [service, time]);
+  }, [service, time, navigate]);
 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 text-gray-900">
@@ -27,12 +29,12 @@ function BookingConfirmation() {
             <p><strong>Time:</strong> {time}</p>
         </div>
 
-        <a
-            href="/"
+        <button
+            onClick={() => navigate("/")}
             className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"
-          >
+        >
             Back to Home
-        </a>
+        </button>
 
     </div>
   );

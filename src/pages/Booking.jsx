@@ -1,70 +1,92 @@
-import { useState } from "react";
-import TimeSlot from "../components/TimeSlot";
+import React, { useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { servicesData } from "../data/servicesData";
 
 function Booking() {
-    const [selectedService, setSelectedService] = useState("");
+    const [searchParams] = useSearchParams();
+    const [selectedService, setSelectedService] = useState(searchParams.get("service") || "");
     const [selectedTime, setSelectedTime] = useState("");
+    const navigate = useNavigate();
 
-    const services = ["Haircut", "Beard Trim", "Hair Coloring", "Facial Treatment"];
-    const timeSlots = ["10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"];
-
-    const handleContinue = () => {
-        if (!selectedService || !selectedTime) {
-        alert("Please select a service and a time slot.");
-        return;
-        }
-
-        window.location.href = `/confirmation?service=${selectedService}&time=${selectedTime}`;
-    };
+    const timeSlots = [
+        { time: "10:00 AM", status: "Quiet" },
+        { time: "11:00 AM", status: "Popular" },
+        { time: "12:00 PM", status: "Popular" },
+        { time: "02:00 PM", status: "Filling Fast" },
+        { time: "03:00 PM", status: "Recommended" },
+        { time: "04:00 PM", status: "Quiet" },
+    ];
 
     return (
-        <div className="min-h-screen bg-white px-6 py-12 text-gray-900">
+        <div className="min-h-screen bg-white py-16 px-6 font-sans">
+            <div className="max-w-4xl mx-auto">
+                <h1 className="text-3xl font-black mb-10 text-center tracking-tight text-slate-950">
+                    Beauty, Reserved
+                </h1>
 
-            <h1 className="text-3xl font-bold mb-10 text-center">Book an Appointment</h1>
+                <div className="grid lg:grid-cols-3 gap-12">
 
-            {/* Services */}
-            <div className="mb-12">
-                <h2 className="text-xl font-semibold mb-4">Select a Service</h2>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    {services.map((service, index) => (
+                    {/* Left: list of services */}
+                    <div className="lg:col-span-1 space-y-3">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 ml-1">1. Service</h2>
+                        {servicesData.map((s) => (
+                            <button
+                                key={s.id}
+                                onClick={() => setSelectedService(s.title)}
+                                className={`w-full text-left px-5 py-4 rounded-2xl border-2 transition-all duration-300 ${selectedService === s.title
+                                    ? "border-pink-600 bg-pink-600 text-white shadow-[0_10px_25px_rgba(219,39,119,0.2)] scale-[1.02]"
+                                    : "border-gray-50 bg-gray-50 text-slate-600 hover:border-pink-100 hover:bg-pink-50 hover:text-pink-700"
+                                    }`}
+                            >
+                                <span className="font-bold">{s.title}</span>
+                            </button>
+                        ))}
+                    </div>
+
+                    {/* Right: Select time */}
+                    <div className="lg:col-span-2">
+                        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 ml-1">2. Select Time</h2>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                            {timeSlots.map((slot) => {
+                                const isSelected = selectedTime === slot.time;
+                                return (
+                                    <button
+                                        key={slot.time}
+                                        onClick={() => setSelectedTime(slot.time)}
+                                        className={`group relative p-4 rounded-2xl border-2 transition-all duration-300 transform active:scale-95 ${isSelected
+                                            ? "border-pink-600 bg-pink-600 text-white shadow-xl translate-y-[-4px]"
+                                            : "border-gray-50 bg-white hover:border-pink-200 hover:shadow-md"
+                                            }`}
+                                    >
+                                        <div className="flex flex-col items-center justify-center text-center">
+                                            <span className={`text-lg font-black ${isSelected ? "text-white" : "text-slate-900"}`}>
+                                                {slot.time}
+                                            </span>
+                                            <span className={`text-[10px] mt-1 font-bold px-2 py-0.5 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-pink-50 text-pink-600 group-hover:bg-pink-100 group-hover:text-pink-700"
+                                                }`}>
+                                                {slot.status}
+                                            </span>
+                                        </div>
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* Submit button */}
                         <button
-                        key={index}
-                        className={`border px-4 py-2 rounded-lg hover:bg-gray-100 transition ${
-                            selectedService === service ? "bg-black text-white" : ""
-                        }`}
-                        onClick={() => setSelectedService(service)}
+                            disabled={!selectedService || !selectedTime}
+                            onClick={() => navigate(`/confirmation?service=${selectedService}&time=${selectedTime}`)}
+                            className={`w-full mt-10 py-5 rounded-2xl font-black text-lg transition-all duration-500 ${selectedService && selectedTime
+                                ? "bg-pink-600 text-white shadow-[0_20px_50px_rgba(219,39,119,0.3)] hover:bg-pink-700"
+                                : "bg-gray-100 text-gray-300 cursor-not-allowed"
+                                }`}
                         >
-                        {service}
+                            Confirm Booking
                         </button>
-                    ))}
+                    </div>
+
                 </div>
             </div>
-
-            {/* Time Slots */}
-            <div className="mb-12">
-                <h2 className="text-xl font-semibold mb-4">Select a Time Slot</h2>
-                <div className="grid grid-cols-3 md:grid-cols-6 gap-4">
-                    {timeSlots.map((time, index) => (
-                        <TimeSlot
-                        key={index}
-                        time={time}
-                        selected={selectedTime === time}
-                        onSelect={() => setSelectedTime(time)}
-                        />
-                    ))}
-                </div>
-            </div>
-
-            {/* Continue */}
-            <div className="text-center">
-                <button
-                onClick={handleContinue}
-                className="px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 transition"
-                >
-                Continue
-                </button>
-            </div>
-
         </div>
     );
 }
