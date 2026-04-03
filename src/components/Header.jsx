@@ -1,23 +1,31 @@
 import { Link } from "react-router-dom";
-import "./Header.css";
 
 function Header() {
     return (
-        <header className="header">
-        <div className="logo">SmartBooking</div>
+        <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-gray-100">
+            <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
 
-        <nav className="nav">
-            <Link to="/">Home</Link>
-            <Link to="/services">Services</Link>
-            <Link to="/booking">Booking</Link>
-            <Link to="/help-center">Help Center</Link>
-            <Link to="/contact">Contact</Link>
-        </nav>
+                <Link to="/" className="text-xl font-bold tracking-tight text-slate-900">
+                    Smart<span className="text-pink-600">Booking</span>
+                </Link>
 
-        <div className="actions">
-            <button className="lang-btn">NL</button>
-            <button className="login-btn">Login</button>
-        </div>
+                <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
+                    <Link to="/services" className="hover:text-pink-600 transition">Services</Link>
+                    <Link to="/booking" className="hover:text-pink-600 transition">Booking</Link>
+                    <Link to="/contact" className="hover:text-pink-600 transition">Contact</Link>
+                </nav>
+
+                <div className="flex items-center gap-3">
+                    <button className="text-sm font-bold text-slate-400 hover:text-slate-600 transition">NL</button>
+
+                    <Link
+                        to="/login"
+                        className="px-6 py-2.5 bg-pink-600 text-white text-sm font-bold rounded-xl hover:bg-pink-700 transition shadow-lg shadow-pink-100 active:scale-95"
+                    >
+                        Login
+                    </Link>
+                </div>
+            </div>
         </header>
     );
 }
