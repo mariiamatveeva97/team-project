@@ -1,78 +1,72 @@
-import { Link } from "react-router-dom";
-/* Welcome Text */
-<div className="mb-6">
-  <h2 className="text-xl font-semibold text-gray-800">Welcome to SmartBooking!</h2>
-  <p className="text-gray-600 text-sm mt-2">
-    Create your account to book appointments instantly and enjoy personalized salon services.
-  </p>
-</div>
-
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../api/axios";
+import Swal from "sweetalert2";
 
 function Signup() {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+    const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
+    const navigate = useNavigate();
 
-      <div className="bg-white shadow-lg rounded-2xl p-10 w-full max-w-md text-center">
+    const handleSignup = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await api.post("/auth/register", formData);
 
-        {/* Logo */}
-        <div className="mb-6">
-          <img
-            src="/images/logo.png"
-            alt="SmartBooking Logo"
-            className="w-24 mx-auto mb-3"
-          />
-          <h1 className="text-2xl font-bold text-gray-800">Create Account</h1>
+            Swal.fire({
+                title: "Success!",
+                text: "Account created! Log in now.",
+                icon: "success",
+                confirmButtonColor: "#db2777",
+            }).then(() => navigate("/login"));
+        } catch (err) {
+            Swal.fire({
+                title: "Error",
+                text: err.response?.data.message || "Failed to register",
+                icon: "error",
+            });
+        }
+    };
+
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 px-6">
+            <div className="bg-white shadow-2xl rounded-[40px] p-10 w-full max-w-md text-center border border-gray-100">
+                <h1 className="text-3xl font-black text-gray-900 mb-6">Create Account</h1>
+                <form className="space-y-4" onSubmit={handleSignup}>
+                    <input
+                        type="text"
+                        placeholder="Full Name"
+                        className="w-full bg-gray-50 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-pink-500"
+                        onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
+                        required
+                    />
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        className="w-full bg-gray-50 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-pink-500"
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        required
+                    />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        className="w-full bg-gray-50 rounded-2xl p-4 outline-none focus:ring-2 focus:ring-pink-500"
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        required
+                    />
+                    <button className="w-full bg-pink-600 text-white py-4 rounded-2xl font-black text-lg hover:bg-pink-700 transition shadow-xl active:scale-95">
+                        Register Now
+                    </button>
+                </form>
+
+                <p className="text-gray-500 text-sm mt-6">
+                    Already have an account?{" "}
+                    <Link to="/login" className="text-pink-600 font-bold hover:underline">
+                        Login
+                    </Link>
+                </p>
+            </div>
         </div>
-
-        {/* Signup Form */}
-        <form className="space-y-4">
-
-          <div className="text-left">
-            <label className="block text-gray-700 mb-1">Full Name</label>
-            <input
-              type="text"
-              placeholder="Enter your name"
-              className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          <div className="text-left">
-            <label className="block text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          <div className="text-left">
-            <label className="block text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              placeholder="Create a password"
-              className="w-full border rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-            />
-          </div>
-
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition"
-          >
-            Register
-          </button>
-        </form>
-
-        {/* Footer Links */}
-        <p className="text-gray-600 text-sm mt-6">
-          Already have an account?{" "}
-          <Link to="/login" className="text-blue-600 font-medium hover:underline">
-            Login
-          </Link>
-        </p>
-
-      </div>
-    </div>
-  );
+    );
 }
 
 export default Signup;
