@@ -1,132 +1,110 @@
-import React, { useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { servicesData } from "../data/servicesData";
+import React, { useState, useContext } from "react";
+import { useSearchParams, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import api from "../api/axios"; 
+import Swal from "sweetalert2";
+import { Calendar as CalendarIcon, Clock, Scissors } from "lucide-react";
+
 
 function Booking() {
     const [searchParams] = useSearchParams();
-    const [selectedService, setSelectedService] = useState(searchParams.get("service") || "");
-    const [selectedTime, setSelectedTime] = useState("");
+    const serviceName = searchParams.get("service") || "Select Service";
+    const { user } = useContext(AuthContext); 
     const navigate = useNavigate();
 
-    const timeSlots = [
-        { time: "10:00 AM", status: "Quiet" },
-        { time: "11:00 AM", status: "Popular" },
-        { time: "12:00 PM", status: "Popular" },
-        { time: "02:00 PM", status: "Filling Fast" },
-        { time: "03:00 PM", status: "Recommended" },
-        { time: "04:00 PM", status: "Quiet" },
-    ];
+    const [formData, setFormData] = useState({
+        date: "",
+        time: "",
+    });
 
-    // 🔥 NEW: handle booking
-    const handleBooking = async () => {
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        const bookingData = {
+            serviceName: serviceName,
+            date: formData.date,
+            time: formData.time,
+        };
+
         try {
-            const response = await fetch("http://localhost:5000/api/bookings", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    serviceId: selectedService, // later we improve this
-                    time: selectedTime,
-                    date: new Date().toISOString().split("T")[0], // today date
-                }),
+            const response = await api.post("/bookings", bookingData);
+
+            if (response.status === 201 || response.status === 200) {
+                await Swal.fire({
+                    title: 'Booked!',
+                    text: `Your appointment for ${serviceName} is confirmed.`,
+                    icon: 'success',
+                    confirmButtonColor: '#db2777',
+                    borderRadius: '20px'
+                });
+                navigate("/confirmation");
+            }
+        } catch (err) {
+            console.error("Booking error:", err);
+            Swal.fire({
+                title: 'Error',
+                text: err.response?.data?.message || 'Something went wrong. Please try again.',
+                icon: 'error',
+                confirmButtonColor: '#000'
             });
-
-            const data = await response.json();
-            console.log("Booking response:", data);
-
-            // 👉 after success → go to confirmation
-            navigate(`/confirmation?service=${selectedService}&time=${selectedTime}`);
-
-        } catch (error) {
-            console.error("Booking failed:", error);
         }
     };
 
     return (
-        <div className="min-h-screen bg-white py-16 px-6 font-sans">
-            <div className="max-w-4xl mx-auto">
-                <h1 className="text-3xl font-black mb-10 text-center tracking-tight text-slate-950">
-                    Beauty, Reserved
-                </h1>
-
-                <div className="grid lg:grid-cols-3 gap-12">
-
-                    {/* Left: list of services */}
-                    <div className="lg:col-span-1 space-y-3">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 ml-1">
-                            1. Service
-                        </h2>
-                        {servicesData.map((s) => (
-                            <button
-                                key={s.id}
-                                onClick={() => setSelectedService(s.id)}
-                                className={`w-full text-left px-5 py-4 rounded-2xl border-2 transition-all duration-300 ${
-                                    selectedService === s.title
-                                        ? "border-pink-600 bg-pink-600 text-white shadow-[0_10px_25px_rgba(219,39,119,0.2)] scale-[1.02]"
-                                        : "border-gray-50 bg-gray-50 text-slate-600 hover:border-pink-100 hover:bg-pink-50 hover:text-pink-700"
-                                }`}
-                            >
-                                <span className="font-bold">{s.title}</span>
-                            </button>
-                        ))}
+        <div className="min-h-screen bg-gray-50 py-12 px-6">
+            <div className="max-w-xl mx-auto bg-white rounded-[40px] shadow-2xl p-10 border border-gray-100">
+                <div className="text-center mb-10">
+                    <div className="w-16 h-16 bg-pink-50 text-pink-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <Scissors size={32} />
                     </div>
-
-                    {/* Right: Select time */}
-                    <div className="lg:col-span-2">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4 ml-1">
-                            2. Select Time
-                        </h2>
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                            {timeSlots.map((slot) => {
-                                const isSelected = selectedTime === slot.time;
-                                return (
-                                    <button
-                                        key={slot.time}
-                                        onClick={() => setSelectedTime(slot.time)}
-                                        className={`group relative p-4 rounded-2xl border-2 transition-all duration-300 transform active:scale-95 ${
-                                            isSelected
-                                                ? "border-pink-600 bg-pink-600 text-white shadow-xl translate-y-[-4px]"
-                                                : "border-gray-50 bg-white hover:border-pink-200 hover:shadow-md"
-                                        }`}
-                                    >
-                                        <div className="flex flex-col items-center justify-center text-center">
-                                            <span
-                                                className={`text-lg font-black ${
-                                                    isSelected ? "text-white" : "text-slate-900"
-                                                }`}
-                                            >
-                                                {slot.time}
-                                            </span>
-                                            <span
-                                                className={`text-[10px] mt-1 font-bold px-2 py-0.5 rounded-full ${
-                                                    isSelected
-                                                        ? "bg-white/20 text-white"
-                                                        : "bg-pink-50 text-pink-600 group-hover:bg-pink-100 group-hover:text-pink-700"
-                                                }`}
-                                            >
-                                                {slot.status}
-                                            </span>
-                                        </div>
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        {/* Submit button */}
-                        <button
-                            disabled={!selectedService || !selectedTime}
-                            onClick={handleBooking} // 🔥 changed
-                            className={`w-full mt-10 py-5 rounded-2xl font-black text-lg transition-all duration-500 ${
-                                selectedService && selectedTime
-                                    ? "bg-pink-600 text-white shadow-[0_20px_50px_rgba(219,39,119,0.3)] hover:bg-pink-700"
-                                    : "bg-gray-100 text-gray-300 cursor-not-allowed"
-                            }`}
-                        >
-                            Confirm Booking
-                        </button>
-                    </div>
+                    <h1 className="text-3xl font-black text-gray-900">Book Appointment</h1>
+                    <p className="text-pink-600 font-bold mt-2 uppercase tracking-widest text-sm">{serviceName}</p>
                 </div>
+
+                <form onSubmit={handleSubmit} className="space-y-6">
+                    {/* Date Selection */}
+                    <div>
+                        <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 ml-1">
+                            <CalendarIcon size={14} /> Select Date
+                        </label>
+                        <input
+                            type="date"
+                            required
+                            className="w-full bg-gray-50 border-2 border-transparent rounded-2xl p-4 focus:bg-white focus:border-pink-500 outline-none transition-all"
+                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                        />
+                    </div>
+
+                    {/* Time Selection */}
+                    <div>
+                        <label className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-gray-400 mb-2 ml-1">
+                            <Clock size={14} /> Select Time
+                        </label>
+                        <select
+                            required
+                            className="w-full bg-gray-50 border-2 border-transparent rounded-2xl p-4 focus:bg-white focus:border-pink-500 outline-none transition-all appearance-none"
+                            onChange={(e) => setFormData({ ...formData, time: e.target.value })}
+                        >
+                            <option value="">Pick a slot</option>
+                            <option value="10:00 AM">10:00 AM</option>
+                            <option value="12:00 PM">12:00 PM</option>
+                            <option value="02:00 PM">02:00 PM</option>
+                            <option value="04:00 PM">04:00 PM</option>
+                            <option value="06:00 PM">06:00 PM</option>
+                        </select>
+                    </div>
+
+                    <button
+                        type="submit"
+                        className="w-full bg-slate-900 text-white py-5 rounded-2xl font-black text-lg hover:bg-pink-600 transition-all shadow-xl active:scale-95 mt-4"
+                    >
+                        Confirm Booking
+                    </button>
+                </form>
+
+                <p className="text-center text-gray-400 text-xs mt-8">
+                    By confirming, you agree to our terms of service and cancellation policy.
+                </p>
             </div>
         </div>
     );

@@ -1,11 +1,15 @@
+const Service = require("../models/Service");
 const express = require("express");
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.json([
-    { id: 1, name: "Haircut & Styling", price: 45 },
-    { id: 2, name: "Luxury Beard Grooming", price: 30 }
-  ]);
+// Fetch all available salon services
+router.get("/", async (req, res) => {
+  try {
+    const services = await Service.find(); 
+    res.json(services);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching services" });
+  }
 });
 
 module.exports = router;
