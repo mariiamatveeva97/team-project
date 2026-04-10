@@ -3,7 +3,7 @@ function Footer() {
         <footer className="bg-white border-t border-gray-100 py-12 mt-20 text-sm">
             <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row justify-between items-center gap-8">
 
-                {/* LOGO */}
+                {/* logo */}
                 <div>
                     <h2 className="text-xl font-bold text-slate-900">
                         Smart<span className="text-pink-600">Booking</span>
@@ -11,7 +11,7 @@ function Footer() {
                     <p className="text-slate-400 mt-1 font-medium">© 2026 All rights reserved.</p>
                 </div>
 
-                {/* SOCIAL ICONS */}
+                {/* social icons */}
                 <div className="flex gap-4">
                     {[
                         {
@@ -41,7 +41,7 @@ function Footer() {
                     ))}
                 </div>
 
-                {/* LINKS */}
+                {/* links */}
                 <div className="flex gap-8 font-semibold text-slate-500">
                     <a href="/contact" className="hover:text-pink-600 transition">Questions?</a>
                     <a href="/services" className="hover:text-pink-600 transition">Our Services</a>

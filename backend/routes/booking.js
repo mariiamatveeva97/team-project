@@ -43,7 +43,7 @@ router.get("/recommendation", auth, async (req, res) => {
   }
 });
 
-// 1. AVAILABILITY CHECK (OPEN TO ALL)
+// 1. availability for a given date
 router.get("/availability", async (req, res) => {
   try {
     const { date } = req.query;
@@ -59,7 +59,7 @@ router.get("/availability", async (req, res) => {
   }
 });
 
-// 2. GET ALL BOOKINGS (ADMINS ONLY)
+// 2. get all bookings (admin only)
 router.get("/all", auth, isAdmin, async (req, res) => {
   try {
     const allBookings = await Booking.find()
@@ -71,7 +71,7 @@ router.get("/all", auth, isAdmin, async (req, res) => {
   }
 });
 
-// 3. CREATE NEW BOOKING
+// 3. create booking (authenticated users)
 router.post("/", auth, async (req, res) => {
   try {
     const { serviceName, time, date } = req.body;
@@ -102,7 +102,7 @@ router.post("/", auth, async (req, res) => {
   }
 });
 
-// 4. GET MY BOOKINGS
+// 4. get user's bookings (authenticated users)
 router.get("/my", auth, async (req, res) => {
   try {
     const bookings = await Booking.find({ userId: req.userId }).sort({ date: 1, time: 1 });
@@ -112,7 +112,7 @@ router.get("/my", auth, async (req, res) => {
   }
 });
 
-// 5. DELETE (OWNER OR ADMIN)
+// 5. delete booking (owner or admin)
 router.delete("/:id", auth, async (req, res) => {
   try {
     const booking = await Booking.findById(req.params.id);
@@ -133,7 +133,7 @@ router.delete("/:id", auth, async (req, res) => {
   }
 });
 
-// 6. EDIT (OWNER OR ADMIN)
+// 6. edit booking (owner or admin)
 router.put("/:id", auth, async (req, res) => {
   try {
     const { time, date } = req.body;

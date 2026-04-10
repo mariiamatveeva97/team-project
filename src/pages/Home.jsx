@@ -9,7 +9,7 @@ function Home() {
   return (
     <div className="min-h-screen bg-[#fff5f8] text-gray-900 font-sans">
 
-      {/* --- HERO SECTION --- */}
+      {/* hero section */}
       <section className="relative w-full py-16 lg:py-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 lg:px-8 grid lg:grid-cols-2 gap-12 items-center relative z-10">
 
@@ -61,7 +61,7 @@ function Home() {
         </div>
       </section>
 
-      {/* --- FEATURES SECTION --- */}
+      {/* features section */}
       <section className="py-24 px-6 max-w-7xl mx-auto">
         <div className="grid md:grid-cols-3 gap-10">
           <div className="p-10 bg-white rounded-[40px] shadow-[0_15px_40px_rgba(0,0,0,0.02)] border border-pink-50 hover:translate-y-[-10px] transition-all duration-500">
@@ -96,7 +96,7 @@ function Home() {
         </div>
       </section>
 
-      {/* --- CTA SECTION --- */}
+      {/* cta section */}
       <section className="px-6 mb-24">
         <div className="max-w-7xl mx-auto bg-gradient-to-br from-pink-400 via-pink-500 to-pink-600 py-20 px-6 text-center text-white rounded-[60px] shadow-[0_20px_50px_-10px_rgba(219,39,119,0.4)] relative overflow-hidden border-4 border-white/20">
 

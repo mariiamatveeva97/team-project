@@ -55,7 +55,7 @@ function Contact() {
         <div className="min-h-screen bg-[#fff5f8] flex items-center justify-center px-6 py-12">
             <div className="max-w-5xl w-full grid md:grid-cols-2 bg-white rounded-[40px] shadow-[0_30px_100px_-20px_rgba(219,39,119,0.15)] overflow-hidden border border-pink-50">
 
-                {/* Left Panel - Pink Gradient */}
+                {/* Left Panel */}
                 <div className="bg-gradient-to-br from-pink-500 to-pink-600 p-12 text-white flex flex-col justify-between relative overflow-hidden">
                     <div className="absolute -top-20 -left-20 w-64 h-64 bg-white/10 rounded-full blur-3xl"></div>
                     <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-black/10 rounded-full blur-3xl"></div>
@@ -96,7 +96,7 @@ function Contact() {
                     </div>
                 </div>
 
-                {/* Right Panel - Form */}
+                {/* Right Panel */}
                 <div className="p-12 bg-white">
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="group">

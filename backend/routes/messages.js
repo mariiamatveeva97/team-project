@@ -16,7 +16,7 @@ router.post("/", async (req, res) => {
     }
 });
 
-// Get all messages (ADMIN ONLY)
+// Get all messages (admin only)
 router.get("/all", auth, async (req, res) => {
     try {
         const adminUser = await User.findById(req.userId);
@@ -29,7 +29,7 @@ router.get("/all", auth, async (req, res) => {
     }
 });
 
-// Delete a message (ADMIN ONLY)
+// Delete a message (admin only)
 router.delete("/:id", async (req, res) => {
     try {
         const messageId = req.params.id;

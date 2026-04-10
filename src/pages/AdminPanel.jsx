@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import api from "../api/axios";
-import { MessageSquare, Calendar, Trash2, Edit2, User, Mail, Info } from "lucide-react";
+import { Trash2, Edit2 } from "lucide-react";
 import Swal from "sweetalert2";
 
 function AdminPanel() {

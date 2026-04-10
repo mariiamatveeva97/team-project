@@ -6,7 +6,10 @@ import Swal from "sweetalert2";
 import { Calendar as CalendarIcon, Clock, Scissors, Star, Sparkles } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-import "./datepicker-custom.css";
+
+const services = ["Classic Manicure", "Haircut & Styling", "Gel Polish Change", "Brow Shape & Tint", "Express Facial", "Evening Makeup", "Relaxing Massage"];
+const allSlots = ["10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM", "06:00 PM"];
+
 
 function Booking() {
     const [searchParams] = useSearchParams();
@@ -14,7 +17,7 @@ function Booking() {
     const { user } = useContext(AuthContext);
     const [recommendedTime, setRecommendedTime] = useState(null);
 
-    const services = ["Classic Manicure", "Haircut & Styling", "Gel Polish Change", "Brow Shape & Tint", "Express Facial", "Evening Makeup", "Relaxing Massage"];
+    
 
     const [formData, setFormData] = useState({
         serviceName: searchParams.get("service") || "",
@@ -23,8 +26,7 @@ function Booking() {
     });
 
     const [bookedSlots, setBookedSlots] = useState([]);
-    const allSlots = ["10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM", "06:00 PM"];
-
+    
     useEffect(() => {
         const serviceFromUrl = searchParams.get("service");
         if (serviceFromUrl && services.includes(serviceFromUrl)) {
