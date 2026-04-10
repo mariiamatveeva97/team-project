@@ -2,6 +2,47 @@
   z-index: 9999 !important;
 }
 
+.swal2-confirm {
+  background-color: #db2777 !important; 
+  color: white !important;
+}
+
+.swal2-cancel {
+  background-color: #111827 !important; 
+  color: white !important;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.react-datepicker {
+    border-radius: 24px !important;
+    border: none !important;
+    box-shadow: 0 20px 40px rgba(219, 39, 119, 0.15) !important;
+    font-family: inherit !important;
+    padding: 10px;
+}
+
+.react-datepicker__header {
+    background-color: white !important;
+    border-bottom: 1px solid #fff1f2 !important;
+    border-top-left-radius: 24px !important;
+    border-top-right-radius: 24px !important;
+}
+
+.react-datepicker__day--selected {
+    background: linear-gradient(to right, #ec4899, #db2777) !important;
+    border-radius: 12px !important;
+    color: white !important;
+}
+
+.react-datepicker__day--today {
+    color: #db2777 !important;
+    font-weight: bold;
+}
+
+.react-datepicker__day:hover {
+    background-color: #fff1f2 !important;
+    border-radius: 12px !important;
+}

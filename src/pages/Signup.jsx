@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
 import api from "../api/axios";
 import Swal from "sweetalert2";
 
@@ -7,17 +8,20 @@ function Signup() {
     const [formData, setFormData] = useState({ fullName: "", email: "", password: "" });
     const navigate = useNavigate();
 
+    const { login } = useContext(AuthContext);
+
     const handleSignup = async (e) => {
         e.preventDefault();
         try {
             const response = await api.post("/auth/register", formData);
+            login(response.data);
 
             Swal.fire({
                 title: "Success!",
                 text: "Account created! Log in now.",
                 icon: "success",
                 confirmButtonColor: "#db2777",
-            }).then(() => navigate("/login"));
+            }).then(() => navigate("/my-bookings"));
         } catch (err) {
             Swal.fire({
                 title: "Error",

@@ -13,6 +13,8 @@ import Signup from "./pages/Signup";
 import MyBookings from "./pages/MyBookings";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminPanel from "./pages/AdminPanel";
+import AdminRoute from "./components/AdminRoute";
 
 
 function App() {
@@ -33,6 +35,11 @@ function App() {
                         {/* Protected Routes */}
                         <Route path="/my-bookings" element={<ProtectedRoute><MyBookings /></ProtectedRoute>} />
                         <Route path="/booking" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
+                        <Route path="/admin" element={
+                            <AdminRoute>
+                                <AdminPanel />
+                            </AdminRoute>
+                        } />
                     </Route>
                 </Routes>
             </Router>

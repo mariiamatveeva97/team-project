@@ -15,9 +15,12 @@ function Login() {
         try {
             const response = await api.post("/auth/login", { email, password });
             login(response.data);
-
-            Swal.fire({ title: "Welcome back!", icon: "success", timer: 1500, showConfirmButton: false });
-            navigate("/my-bookings");
+            if (response.data.user.role === "admin") {
+                navigate("/admin"); 
+            } else {
+                Swal.fire({ title: "Welcome back!", icon: "success", timer: 1500, showConfirmButton: false });
+                navigate("/my-bookings");
+            }
         } catch (err) {
             Swal.fire({ title: "Error", text: err.response?.data.message || "Invalid credentials", icon: "error" });
         }

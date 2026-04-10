@@ -3,13 +3,12 @@ const router = express.Router();
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const auth = require("../middleware/auth");
 
 // LOGIN
 router.post("/login", async (req, res) => {
     try {
         const { email, password } = req.body;
-        if (!email || !password) return res.status(400).json({ message: "Email and password required" });
-
         const user = await User.findOne({ email });
         if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -18,19 +17,29 @@ router.post("/login", async (req, res) => {
 
         const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
-        res.json({ token, user: { id: user._id, fullName: user.fullName, email: user.email } });
+        res.json({
+            token,
+            user: { id: user._id, fullName: user.fullName, email: user.email, role: user.role }
+        });
     } catch (error) {
-        console.error("Login error:", error);
         res.status(500).json({ message: "Server error" });
     }
 });
 
-// REGISTER
+// CHECK AUTH 
+router.get("/me", auth, async (req, res) => {
+    try {
+        const user = await User.findById(req.userId).select("-passwordHash");
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Auth check failed" });
+    }
+});
+
+// REGISTER 
 router.post("/register", async (req, res) => {
     try {
         const { fullName, email, password } = req.body;
-        if (!fullName || !email || !password) return res.status(400).json({ message: "All fields required" });
-
         const userExists = await User.findOne({ email });
         if (userExists) return res.status(400).json({ message: "User already exists" });
 
@@ -39,10 +48,8 @@ router.post("/register", async (req, res) => {
         await newUser.save();
 
         const token = jwt.sign({ userId: newUser._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
-
-        res.status(201).json({ token, user: { id: newUser._id, fullName: newUser.fullName, email: newUser.email } });
+        res.status(201).json({ token, user: { id: newUser._id, fullName: newUser.fullName, role: newUser.role } });
     } catch (error) {
-        console.error("Register error:", error);
         res.status(500).json({ message: "Register error" });
     }
 });
