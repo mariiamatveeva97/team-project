@@ -1,70 +1,89 @@
-# Getting Started with Create React App
+#SmartBooking 💅✨
+**SmartBooking** is a modern, full-stack appointment scheduling application designed to make beauty and wellness bookings seamless. Built with React for the frontend and a Node.js/Express backend, it allows users to browse services, register/login, and manage their personal appointments in real-time.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Key Features
+**User Authentication:** Secure registration and login with JWT-based sessions.
 
-## Available Scripts
+**Service Catalog:** Browse through available beauty services with a real-time search filter.
 
-In the project directory, you can run:
+Booking Management:
 
-### `npm start`
+Book appointments for your favorite services.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Reschedule appointments with ease.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Cancel bookings directly from the user dashboard.
 
-### `npm test`
+**Responsive UI:** A sleek, mobile-friendly design using Tailwind CSS.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+**Professional UX:** Integrated with SweetAlert2 for elegant notifications and alerts.
 
-### `npm run build`
+## Versatility (Multi-Purpose Engine)
+One of the core strengths of this project is its **highly adaptable architecture.** While the default theme is set for beauty services, the underlying engine can be easily repurposed for any booking-based business, such as:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+**Medical Clinics:** Appointment scheduling for doctors.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+**Auto Repair:** Booking time slots for car maintenance.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+**Tutoring/Education:** Managing private lessons.
 
-### `npm run eject`
+**Real Estate:** Scheduling property viewings.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+**Fitness:** Reserving slots for gym classes or personal training.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## Tech Stack
+**Frontend:** React, React Router, Tailwind CSS, Lucide Icons, Axios.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+**Backend:** Node.js, Express, MongoDB.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+**Authentication:** JWT (JSON Web Tokens).
 
-## Learn More
+**Alerts:** SweetAlert2.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Getting Started
+### Prerequisites
+* Node.js installed on your machine.
 
-### Code Splitting
+* MongoDB running (local or cloud).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Installation
+1. **Clone the repository:**
+```Bash
+git clone https://github.com/mariiamatveeva97/team-project.git
+cd team-project
+```
+2. **Setup Frontend:**
+```Bash
+cd client
+npm install
+npm start
+```
 
-### Analyzing the Bundle Size
+3. **Setup Backend:**
+```Bash
+cd server
+npm install
+npm run dev
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## Security Features
+* **Protected Routes:** Only authenticated users can access the booking and dashboard pages via ProtectedRoute wrappers.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+* **Axios Interceptors:** Automatic injection of `Authorization: Bearer <token> headers for every API request.`
 
-### Advanced Configuration
+* **Token Expiration:** Automatic logout and redirect if the server returns a 401 Unauthorized status.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+## Preview
+* **Dashboard:** View all upcoming appointments.
 
-### Deployment
+* **Service List:** Filter by keywords or categories instantly.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+* **Booking Flow:** Select date and time with a user-friendly modal.
 
-### `npm run build` fails to minify
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+*Built with passion for scalability and user experience.*

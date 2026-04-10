@@ -45,18 +45,30 @@ function Services() {
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {filteredServices.map((service) => (
                         <div key={service._id} className="bg-white rounded-[32px] overflow-hidden shadow-sm hover:shadow-2xl transition-all border border-gray-100 group">
+
+                            {/* Image and category badge */}
                             <div className="h-56 overflow-hidden relative">
-                                <img src={service.image} alt={service.title} className="w-full h-full object-cover group-hover:scale-110 transition-duration-700" />
+                                <img
+                                    src={service.image || "https://images.unsplash.com/photo-1560066984-138dadb4c035?q=80&w=600&auto=format&fit=crop"}
+                                    alt={service.title}
+                                    className="w-full h-full object-cover group-hover:scale-110 transition-duration-700"
+                                    onError={(e) => {
+                                        e.target.src = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600&auto=format&fit=crop";
+                                    }}
+                                />
+
                                 <div className="absolute top-4 left-4 bg-pink-600 text-white px-3 py-1 rounded-full text-xs font-bold uppercase">
                                     {service.category}
                                 </div>
                             </div>
+
+                            {/* Service Information */}
                             <div className="p-8">
                                 <h3 className="text-xl font-bold mb-2">{service.title}</h3>
                                 <div className="flex justify-between items-center border-t pt-6">
                                     <span className="text-2xl font-black">€{service.price}</span>
                                     <button
-                                        onClick={() => navigate(`/booking?service=${service.title}`)}
+                                        onClick={() => navigate(`/booking?service=${encodeURIComponent(service.title)}`)}
                                         className="px-8 py-3 bg-black text-white rounded-2xl font-bold hover:bg-pink-600 transition shadow-lg"
                                     >
                                         Book Now
@@ -67,7 +79,7 @@ function Services() {
                     ))}
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

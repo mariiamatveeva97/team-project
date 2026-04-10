@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, ShieldCheck } from "lucide-react";
 
 function Header() {
     const { user, logout } = useContext(AuthContext);
@@ -16,6 +16,16 @@ function Header() {
                 <nav className="hidden md:flex items-center gap-8 text-sm font-semibold text-slate-600">
                     <Link to="/services" className="hover:text-pink-600 transition">Services</Link>
                     <Link to="/booking" className="hover:text-pink-600 transition">Booking</Link>
+
+                    {user && user.role === 'admin' && (
+                        <Link
+                            to="/admin"
+                            className="flex items-center gap-1 text-pink-600 font-bold hover:text-pink-700 transition border-l pl-6 border-gray-200"
+                        >
+                            <ShieldCheck size={18} />
+                            Admin Panel
+                        </Link>
+                    )}
                 </nav>
 
                 <div className="flex items-center gap-3">

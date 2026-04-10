@@ -8,17 +8,26 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const userId = localStorage.getItem('userId');
-        const fullName = localStorage.getItem('fullName');
-        if (userId && fullName) setUser({ id: userId, fullName });
-        setLoading(false);
+        const checkAuth = async () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                try {
+                    const res = await api.get('/auth/me');
+                    setUser(res.data);
+                } catch (err) {
+                    localStorage.clear();
+                    setUser(null);
+                }
+            }
+            setLoading(false);
+        };
+        checkAuth();
     }, []);
 
     const login = (data) => {
         localStorage.setItem('token', data.token);
-        localStorage.setItem('userId', data.user.id);
-        localStorage.setItem('fullName', data.user.fullName);
-        setUser({ id: data.user.id, fullName: data.user.fullName });
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setUser(data.user);
     };
 
     const logout = () => {
