@@ -7,18 +7,26 @@ import Swal from "sweetalert2";
 
 function MyBookings() {
     const [bookings, setBookings] = useState([]);
+    const [loading, setLoading] = useState(true);
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const fetchBookings = useCallback(async () => {
-        if (!user?.id) return;
+        const userId = user?._id || user?.id;
+        if (!userId) {
+            setLoading(false);
+            return;
+        }
         try {
             const response = await api.get("/bookings/my");
-            setBookings(response.data);
+            console.log("My bookings:", response.data);
+            setBookings(Array.isArray(response.data) ? response.data : []);
         } catch (err) {
             console.error("Download error:", err);
+        } finally {
+            setLoading(false);
         }
-    }, [user?.id]);
+    }, [user]);
 
     useEffect(() => {
         fetchBookings();
@@ -49,22 +57,70 @@ function MyBookings() {
         }
     };
 
-    const handleReschedule = async (id) => {
+    const handleReschedule = async (booking) => {
+        const allSlots = ["10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM", "06:00 PM"];
+
+        const now = new Date();
+        const yyyy = now.getFullYear();
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        const dd = String(now.getDate()).padStart(2, '0');
+        const todayStr = `${yyyy}-${mm}-${dd}`;
+
+        let availableSlots = allSlots;
+
+        if (booking.date === todayStr) {
+            availableSlots = allSlots.filter(slot => {
+                const [time, modifier] = slot.split(' ');
+                let [hours] = time.split(':');
+                hours = parseInt(hours, 10);
+
+                if (modifier === 'PM' && hours < 12) hours += 12;
+                if (modifier === 'AM' && hours === 12) hours = 0;
+
+                const slotTime = new Date();
+                slotTime.setHours(hours, 0, 0, 0);
+
+                return slotTime.getTime() > (now.getTime() + 30 * 60 * 1000);
+            });
+        }
+
+        if (availableSlots.length === 0) {
+            return Swal.fire({
+                title: 'No more slots today',
+                text: 'Please cancel and book for another day.',
+                icon: 'info',
+                confirmButtonColor: '#db2777'
+            });
+        }
+
+        const inputOptions = {};
+        availableSlots.forEach(s => {
+            inputOptions[s] = s;
+        });
+
         const { value: newTime } = await Swal.fire({
             title: 'Select New Time',
             input: 'select',
-            inputOptions: { '10:00 AM': '10:00 AM', '12:00 PM': '12:00 PM', '02:00 PM': '02:00 PM' },
+            inputOptions: inputOptions,
+            inputPlaceholder: 'Choose a slot',
             showCancelButton: true,
             confirmButtonColor: '#db2777',
+            borderRadius: '24px'
         });
 
         if (newTime) {
             try {
-                await api.put(`/bookings/${id}`, { time: newTime });
-                await Swal.fire({ title: 'Updated!', icon: 'success', timer: 1500 });
+                await api.put(`/bookings/${booking._id}`, { time: newTime });
+                await Swal.fire({
+                    title: 'Rescheduled!',
+                    icon: 'success',
+                    timer: 1500,
+                    showConfirmButton: false
+                });
                 fetchBookings();
             } catch (err) {
                 console.error("Update error:", err);
+                Swal.fire('Error', 'Could not update time', 'error');
             }
         }
     };
@@ -95,7 +151,7 @@ function MyBookings() {
 
                                 <div className="flex gap-2">
                                     <button
-                                        onClick={() => handleReschedule(b._id)}
+                                        onClick={() => handleReschedule(b)}
                                         className="p-3 bg-gray-50 text-gray-600 rounded-2xl hover:bg-pink-50 hover:text-pink-600 transition"
                                     >
                                         <Edit3 size={18} />

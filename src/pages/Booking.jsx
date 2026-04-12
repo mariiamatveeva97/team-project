@@ -17,7 +17,7 @@ function Booking() {
     const { user } = useContext(AuthContext);
     const [recommendedTime, setRecommendedTime] = useState(null);
 
-    
+
 
     const [formData, setFormData] = useState({
         serviceName: searchParams.get("service") || "",
@@ -26,7 +26,7 @@ function Booking() {
     });
 
     const [bookedSlots, setBookedSlots] = useState([]);
-    
+
     useEffect(() => {
         const serviceFromUrl = searchParams.get("service");
         if (serviceFromUrl && services.includes(serviceFromUrl)) {
@@ -124,8 +124,13 @@ function Booking() {
                         <DatePicker
                             selected={formData.date ? new Date(formData.date) : null}
                             onChange={(date) => {
-                                const formattedDate = date.toISOString().split("T")[0];
-                                setFormData({ ...formData, date: formattedDate, time: "" });
+                                if (date) {
+                                    const yyyy = date.getFullYear();
+                                    const mm = String(date.getMonth() + 1).padStart(2, '0');
+                                    const dd = String(date.getDate()).padStart(2, '0');
+                                    const formattedDate = `${yyyy}-${mm}-${dd}`;
+                                    setFormData({ ...formData, date: formattedDate, time: "" });
+                                }
                             }}
                             minDate={new Date()}
                             dateFormat="yyyy-MM-dd"
