@@ -4,6 +4,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { Clock, Calendar, Trash2, Edit3 } from "lucide-react";
 import Swal from "sweetalert2";
+import { TIME_SLOTS } from "../constants/timeSlots";
 
 function MyBookings() {
     const [bookings, setBookings] = useState([]);
@@ -19,10 +20,9 @@ function MyBookings() {
         }
         try {
             const response = await api.get("/bookings/my");
-            console.log("My bookings:", response.data);
             setBookings(Array.isArray(response.data) ? response.data : []);
         } catch (err) {
-            console.error("Download error:", err);
+            console.error("Error fetching bookings:", err);
         } finally {
             setLoading(false);
         }
@@ -52,24 +52,22 @@ function MyBookings() {
                 await Swal.fire({ title: 'Deleted!', icon: 'success', timer: 1500 });
                 fetchBookings();
             } catch (err) {
-                console.error("Delete error:", err);
+                Swal.fire('Error', 'Could not cancel booking', 'error');
             }
         }
     };
 
     const handleReschedule = async (booking) => {
-        const allSlots = ["10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM", "06:00 PM"];
-
         const now = new Date();
         const yyyy = now.getFullYear();
         const mm = String(now.getMonth() + 1).padStart(2, '0');
         const dd = String(now.getDate()).padStart(2, '0');
         const todayStr = `${yyyy}-${mm}-${dd}`;
 
-        let availableSlots = allSlots;
+        let availableSlots = TIME_SLOTS;
 
         if (booking.date === todayStr) {
-            availableSlots = allSlots.filter(slot => {
+            availableSlots = TIME_SLOTS.filter(slot => {
                 const [time, modifier] = slot.split(' ');
                 let [hours] = time.split(':');
                 hours = parseInt(hours, 10);
@@ -94,14 +92,12 @@ function MyBookings() {
         }
 
         const inputOptions = {};
-        availableSlots.forEach(s => {
-            inputOptions[s] = s;
-        });
+        availableSlots.forEach(s => { inputOptions[s] = s; });
 
         const { value: newTime } = await Swal.fire({
             title: 'Select New Time',
             input: 'select',
-            inputOptions: inputOptions,
+            inputOptions,
             inputPlaceholder: 'Choose a slot',
             showCancelButton: true,
             confirmButtonColor: '#db2777',
@@ -111,19 +107,22 @@ function MyBookings() {
         if (newTime) {
             try {
                 await api.put(`/bookings/${booking._id}`, { time: newTime });
-                await Swal.fire({
-                    title: 'Rescheduled!',
-                    icon: 'success',
-                    timer: 1500,
-                    showConfirmButton: false
-                });
+                await Swal.fire({ title: 'Rescheduled!', icon: 'success', timer: 1500, showConfirmButton: false });
                 fetchBookings();
             } catch (err) {
-                console.error("Update error:", err);
-                Swal.fire('Error', 'Could not update time', 'error');
+                Swal.fire('Error', err.response?.data?.message || 'Could not update time', 'error');
             }
         }
     };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <p className="text-pink-600 font-bold text-lg">Loading your appointments...</p>
+            </div>
+        );
+    }
+
     return (
         <div className="min-h-screen bg-gray-50 py-12 px-6">
             <div className="max-w-4xl mx-auto">

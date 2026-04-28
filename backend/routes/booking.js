@@ -2,21 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Booking = require("../models/Booking");
 const auth = require("../middleware/auth");
-const User = require("../models/User");
-
-// Middleware to check if user is admin
-const isAdmin = async (req, res, next) => {
-  try {
-    const user = await User.findById(req.userId);
-    if (user && user.role === 'admin') {
-      next();
-    } else {
-      res.status(403).json({ message: "Access denied. Admins only." });
-    }
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-};
+const isAdmin = require("../middleware/admin");
 
 router.get("/recommendation", auth, async (req, res) => {
   try {
@@ -50,7 +36,6 @@ router.get("/availability", async (req, res) => {
     if (!date) return res.status(400).json({ message: "Date is required" });
 
     const bookings = await Booking.find({ date });
-
     const bookedSlots = bookings.map(b => b.time);
 
     res.json({ bookedSlots });
@@ -76,7 +61,11 @@ router.post("/", auth, async (req, res) => {
   try {
     const { serviceName, time, date } = req.body;
 
-    const bookingDateTime = new Date(`${date} ${time}`);
+    if (!serviceName || !time || !date) {
+      return res.status(400).json({ message: "Service, date, and time are required" });
+    }
+
+    const bookingDateTime = new Date(`${date}T${time.replace(' ', 'T')}`);
     const now = new Date();
 
     if (bookingDateTime < now) {
@@ -88,13 +77,7 @@ router.post("/", auth, async (req, res) => {
       return res.status(400).json({ message: "This slot is already taken" });
     }
 
-    const newBooking = new Booking({
-      userId: req.userId,
-      serviceName,
-      time,
-      date
-    });
-
+    const newBooking = new Booking({ userId: req.userId, serviceName, time, date });
     await newBooking.save();
     res.status(201).json(newBooking);
   } catch (error) {
@@ -118,7 +101,7 @@ router.delete("/:id", auth, async (req, res) => {
     const booking = await Booking.findById(req.params.id);
     if (!booking) return res.status(404).json({ message: "Not found" });
 
-    const user = await User.findById(req.userId);
+    const user = await require("../models/User").findById(req.userId);
     const isOwner = booking.userId?.toString() === req.userId;
     const adminCheck = user && user.role === 'admin';
 
@@ -140,7 +123,7 @@ router.put("/:id", auth, async (req, res) => {
     const booking = await Booking.findById(req.params.id);
     if (!booking) return res.status(404).json({ message: "Not found" });
 
-    const user = await User.findById(req.userId);
+    const user = await require("../models/User").findById(req.userId);
     const isOwner = booking.userId?.toString() === req.userId;
     const adminCheck = user && user.role === 'admin';
 

@@ -4,11 +4,14 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require('mongoose');
 
-
 const app = express();
 
 // Middleware
-app.use(cors());
+const allowedOrigins = process.env.ALLOWED_ORIGIN
+    ? process.env.ALLOWED_ORIGIN.split(',')
+    : ['http://localhost:3000'];
+
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 app.use(express.json());
 
 // Connect to MongoDB

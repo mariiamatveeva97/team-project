@@ -6,18 +6,15 @@ import Swal from "sweetalert2";
 import { Calendar as CalendarIcon, Clock, Scissors, Star, Sparkles } from "lucide-react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
-
-const services = ["Classic Manicure", "Haircut & Styling", "Gel Polish Change", "Brow Shape & Tint", "Express Facial", "Evening Makeup", "Relaxing Massage"];
-const allSlots = ["10:00 AM", "12:00 PM", "02:00 PM", "04:00 PM", "06:00 PM"];
-
+import { TIME_SLOTS } from "../constants/timeSlots";
 
 function Booking() {
     const [searchParams] = useSearchParams();
     const navigate = useNavigate();
     const { user } = useContext(AuthContext);
     const [recommendedTime, setRecommendedTime] = useState(null);
-
-
+    const [serviceOptions, setServiceOptions] = useState([]);
+    const [loadingServices, setLoadingServices] = useState(true);
 
     const [formData, setFormData] = useState({
         serviceName: searchParams.get("service") || "",
@@ -27,47 +24,47 @@ function Booking() {
 
     const [bookedSlots, setBookedSlots] = useState([]);
 
+    // Fetch services from the API
+    useEffect(() => {
+        api.get("/services")
+            .then(res => setServiceOptions(res.data.map(s => s.title)))
+            .catch(() => setServiceOptions([]))
+            .finally(() => setLoadingServices(false));
+    }, []);
+
     useEffect(() => {
         const serviceFromUrl = searchParams.get("service");
-        if (serviceFromUrl && services.includes(serviceFromUrl)) {
+        if (serviceFromUrl) {
             setFormData(prev => ({ ...prev, serviceName: serviceFromUrl }));
         }
     }, [searchParams]);
 
-    // 1. Get personalized recommendation based on user's last booking
+    // Get personalized recommendation based on user's last booking
     useEffect(() => {
-        const fetchRecommendation = async () => {
-            try {
-                const res = await api.get("/bookings/recommendation");
-                if (res.data.recommendedTime) {
-                    setRecommendedTime(res.data.recommendedTime);
-                }
-            } catch (err) {
-                console.log("No previous bookings for recommendation");
-            }
-        };
-        if (user) fetchRecommendation();
+        if (!user) return;
+        api.get("/bookings/recommendation")
+            .then(res => { if (res.data.recommendedTime) setRecommendedTime(res.data.recommendedTime); })
+            .catch(() => {});
     }, [user]);
 
-    // 2. Check availability when date changes
+    // Check availability when date changes
     useEffect(() => {
-        if (formData.date) {
-            const fetchAvailability = async () => {
-                try {
-                    const res = await api.get(`/bookings/availability?date=${formData.date}`);
-                    setBookedSlots(res.data.bookedSlots || []);
-                } catch (err) {
-                    console.error("Error fetching availability:", err);
-                }
-            };
-            fetchAvailability();
-        }
+        if (!formData.date) return;
+        api.get(`/bookings/availability?date=${formData.date}`)
+            .then(res => setBookedSlots(res.data.bookedSlots || []))
+            .catch(() => {});
     }, [formData.date]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (!formData.serviceName) {
             return Swal.fire("Error", "Please select a service", "error");
+        }
+        if (!formData.date) {
+            return Swal.fire("Error", "Please select a date", "error");
+        }
+        if (!formData.time) {
+            return Swal.fire("Error", "Please select a time slot", "error");
         }
 
         try {
@@ -109,10 +106,11 @@ function Booking() {
                             required
                             value={formData.serviceName}
                             onChange={(e) => setFormData({ ...formData, serviceName: e.target.value })}
+                            disabled={loadingServices}
                             className="w-full bg-pink-50/30 border-none rounded-[22px] p-5 text-gray-700 font-bold shadow-sm focus:ring-4 focus:ring-pink-100 transition-all outline-none appearance-none cursor-pointer"
                         >
-                            <option value="">-- Choose what you need --</option>
-                            {services.map(s => <option key={s} value={s}>{s}</option>)}
+                            <option value="">{loadingServices ? "Loading services..." : "-- Choose what you need --"}</option>
+                            {serviceOptions.map(s => <option key={s} value={s}>{s}</option>)}
                         </select>
                     </div>
 
@@ -128,8 +126,7 @@ function Booking() {
                                     const yyyy = date.getFullYear();
                                     const mm = String(date.getMonth() + 1).padStart(2, '0');
                                     const dd = String(date.getDate()).padStart(2, '0');
-                                    const formattedDate = `${yyyy}-${mm}-${dd}`;
-                                    setFormData({ ...formData, date: formattedDate, time: "" });
+                                    setFormData({ ...formData, date: `${yyyy}-${mm}-${dd}`, time: "" });
                                 }
                             }}
                             minDate={new Date()}
@@ -138,6 +135,7 @@ function Booking() {
                             className="w-full bg-pink-50/30 border-none rounded-[22px] p-5 text-gray-700 font-bold shadow-sm focus:ring-4 focus:ring-pink-100 transition-all outline-none cursor-pointer"
                         />
                     </div>
+
                     {/* Time Selection */}
                     <div className="group">
                         <div className="flex justify-between items-end mb-3 px-2">
@@ -153,7 +151,7 @@ function Booking() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-3">
-                            {allSlots.map(slot => {
+                            {TIME_SLOTS.map(slot => {
                                 const isBooked = bookedSlots.includes(slot);
                                 const isRecommended = slot === recommendedTime;
 
